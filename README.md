@@ -1,38 +1,42 @@
-Certainly! Here's a simple example of how you can perform a basic analysis of doctor visit records using Python:
 
-```python
-import pandas as pd
-import matplotlib.pyplot as plt
+ import pandas as pd
 
-# Load the dataset
-data = pd.read_csv('doctor_visits.csv')  # Replace 'doctor_visits.csv' with the path to your dataset
+def load_data(filename):
+    try:
+        df = pd.read_csv(filename)
+        return df
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+        return None
 
-# Preview the data
-print(data.head())
+def main():
+    # Replace 'doctor_visits.csv' with your file name if it's different
+    file_path = "doctor_visits.csv"
 
-# Perform basic analysis
-# Example 1: Count the number of doctor visits by gender
-gender_counts = data['Gender'].value_counts()
-print(gender_counts)
+    # Load the data from CSV
+    df = load_data(file_path)
+    if df is None:
+        return
 
-# Example 2: Visualize the distribution of age
-plt.hist(data['Age'], bins=10, edgecolor='black')
-plt.xlabel('Age')
-plt.ylabel('Count')
-plt.title('Distribution of Age')
-plt.show()
+    # Basic statistics
+    num_visits = len(df)
+    num_patients = df['Patient_ID'].nunique()
+    most_common_symptom = df['Symptoms'].mode().iloc[0]
+    most_common_diagnosis = df['Diagnosis'].mode().iloc[0]
 
-# Example 3: Analyze the frequency of different diagnoses
-diagnosis_counts = data['Diagnosis'].value_counts().head(10)
-print(diagnosis_counts)
+    # Medication analysis
+    medication_counts = df['Medication'].value_counts()
+    most_common_medication = medication_counts.index[0]
+    most_prescribed_medication = medication_counts.idxmax()
 
-# Example 4: Calculate the average visit duration
-avg_duration = data['Duration'].mean()
-print(avg_duration)
-```
+    # Print results
+    print("Doctor Visit Analysis Report:")
+    print(f"Total visits: {num_visits}")
+    print(f"Total patients: {num_patients}")
+    print(f"Most common symptom: {most_common_symptom}")
+    print(f"Most common diagnosis: {most_common_diagnosis}")
+    print(f"Most common medication: {most_common_medication}")
+    print(f"Most prescribed medication: {most_prescribed_medication}")
 
-In this example, we assume that you have a dataset named 'doctor_visits.csv' containing columns like 'Gender', 'Age', 'Diagnosis', and 'Duration'. You can modify the code according to your dataset's column names and structure.
-
-This code snippet demonstrates how to load the dataset, perform basic analysis tasks like counting values and calculating averages, and visualize data using histograms.
-
-Feel free to expand upon this code and add more complex analyses or visualizations based on your specific project requirements.
+if __name__ == "__main__":
+    main()
